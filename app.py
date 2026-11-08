@@ -34,6 +34,15 @@ def get_movie():
 
     return jsonify(result)
 
+@app.route("/movies/<int:movie_id>", methods=["GET"])
+def get_movie_by_id(movie_id):
+    movie = next((m for m in movies if m["id"] == movie_id), None)
+
+    if movie is None:
+        return jsonify({"message": "Movie not found"}), 404
+
+    return jsonify(movie)
+
 @app.route("/")
 # METHOD = GET by default
 def home():
