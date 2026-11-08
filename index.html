@@ -12,7 +12,8 @@
   h1{font-size:20px;margin:0;flex:1}
   #status{font:13px ui-monospace,monospace;color:var(--muted);padding:4px 10px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
   #status b{color:var(--ok)} #status.err b{color:var(--bad)}
-  main{max-width:900px;margin:0 auto;padding:24px}
+  main{max-width:900px;margin:0 auto;padding:24px;display:grid;gap:18px}
+  input{font:inherit;background:#0c0f1c;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 12px}
   .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
   .card h3{margin:0 0 4px;font-size:16px}
@@ -23,10 +24,13 @@
 </head>
 <body>
   <header><h1>🎬 My Movies</h1><span id="status">ready</span></header>
-  <main><div id="list" class="grid"></div></main>
+  <main>
+    <input id="filter" placeholder="Filter by director…" autocomplete="off">
+    <div id="list" class="grid"></div>
+  </main>
 <script>
   const $ = s => document.querySelector(s);
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;>",">":"&gt;",'"':"&quot;"}[c]));
   const show = (m, p, status, ok) => { const s = $("#status"); s.className = ok ? "" : "err"; s.innerHTML = `${m} ${p} → <b>${status}</b>`; };
 
   async function api(method, path, body) {
@@ -47,10 +51,13 @@
   </div>`;
 
   async function load() {
-    const { data } = await api("GET", "/movies");
+    const q = $("#filter").value.trim();
+    const path = q ? `/movies?director=${encodeURIComponent(q)}` : "/movies";
+    const { data } = await api("GET", path);
     const movies = data || [];
-    $("#list").innerHTML = movies.length ? movies.map(card).join("") : '<p class="meta">No movies yet.</p>';
+    $("#list").innerHTML = movies.length ? movies.map(card).join("") : '<p class="meta">No matching movies.</p>';
   }
+  $("#filter").addEventListener("input", load);
   load();
 </script>
 </body>

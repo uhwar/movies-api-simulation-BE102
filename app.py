@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import send_file
 from flask import jsonify
+from flask import request
 
 app = Flask("movies-api")
 
@@ -24,7 +25,14 @@ movies = [
 
 @app.route("/movies", methods=["GET"])
 def get_movie():
-    return jsonify(movies)
+    director = request.args.get("director")
+
+    if director is None:
+        result = movies
+    else:
+        result = [m for m in movies if m["director"] == director]
+
+    return jsonify(result)
 
 @app.route("/")
 # METHOD = GET by default
