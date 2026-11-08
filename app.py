@@ -4,17 +4,32 @@ from flask import jsonify
 
 app = Flask("movies-api")
 
-@app.route("/movies")
-def get_movie():
-    return jsonify({
+movies = [
+    {
+        "id": 1,
+        "title": "The Matrix",
+        "director": "The Wachowskis",
+        "year": 1999,
+        "watched": True,
+    },
+    {
+        "id": 2,
         "title": "Inception",
-        "genre": "Sci-Fi",
-        "year": 2010
-    })
+        "director": "Christopher Nolan",
+        "year": 2010,
+        "watched": False,
+    },
+]
+
+
+@app.route("/movies", methods=["GET"])
+def get_movie():
+    return jsonify(movies)
 
 @app.route("/")
 # METHOD = GET by default
 def home():
+    print(movies)
     return send_file("index.html")
 
 @app.route("/about")
