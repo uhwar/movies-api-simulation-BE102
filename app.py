@@ -22,7 +22,18 @@ movies = [
     },
 ]
 
+@app.route("/movies", methods=["POST"])
+def post_movie():
+    data = request.get_json()
+    title = data.get("title")
+    year = data.get("year")
 
+    return jsonify({
+        "message": "Movie received",
+        "received_title": title,
+        "received_year": year
+    })
+    
 @app.route("/movies", methods=["GET"])
 def get_movie():
     director = request.args.get("director")
